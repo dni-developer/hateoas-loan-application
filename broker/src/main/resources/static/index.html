@@ -1,0 +1,49 @@
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("form").submit(function (event) {
+                event.preventDefault();
+
+                var url = "http://localhost:8081/api/mortgage";
+                var data = '{"fullName":"' + $("#fullName").val() + '"}';
+
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    data: data,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data, textStatus, jqXHR) {
+                        var result = JSON.stringify(data, null, 4);
+                        $('#result').html(result);
+
+                        var nextLink = data["_links"]["next"]["href"];
+                        if (nextLink && nextLink.length) {
+                            console.log(nextLink);
+                            $('#next').html('<a href="' + nextLink + '">next</a>')
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.error(jqXHR);
+                        console.error(textStatus);
+                        console.error(errorThrown);
+                    }
+                })
+            });
+
+        });
+    </script>
+</head>
+<body style="background-color:powderblue;">
+<h1>Form</h1>
+<form>
+    <label for="fullName">fullName:</label>
+    <input id="fullName" type="text" name="fullName" value="pass">
+    <input type="submit" value="Submit">
+</form>
+<div id="next"></div>
+<pre id="result"></pre>
+</body>
+</html>

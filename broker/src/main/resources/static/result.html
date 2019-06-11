@@ -1,0 +1,23 @@
+<html>
+<head>
+    <script
+            src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"></script>
+
+    <script>
+        $().ready(function(){
+            $.urlParam = function(name){
+                var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+                return results[1] || 0;
+            }
+
+            $("#display").text($.urlParam('display'));
+        });
+    </script>
+</head>
+<body style="background-color:powderblue;">
+<h1>Result</h1>
+<label id="display"></label>
+</body>
+</html>
