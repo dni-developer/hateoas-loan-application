@@ -8,8 +8,8 @@ import org.springframework.hateoas.ResourceSupport;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Mortgage extends ResourceSupport {
-    private String mortgageId;
+public class Loan extends ResourceSupport {
+    private String loadId;
     private String fullName;
     private boolean pass;
 }

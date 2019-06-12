@@ -6,7 +6,7 @@
             $("form").submit(function (event) {
                 event.preventDefault();
 
-                var url = "http://localhost:8081/api/mortgage";
+                var url = "http://localhost:8081/api/loan";
                 var data = '{"fullName":"' + $("#fullName").val() + '"}';
 
                 $.ajax({

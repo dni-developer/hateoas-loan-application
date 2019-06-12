@@ -1,7 +1,7 @@
 package net.dni.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import net.dni.Mortgage;
+import net.dni.Loan;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.HttpEntity;
@@ -21,52 +21,52 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/mortgage")
-public class MortgageController {
+@RequestMapping("/api/loan")
+public class LoanController {
 
     private RestTemplate restTemplate = new RestTemplate();
-    private Map<String, Mortgage> localStorage = new HashMap<>();
+    private Map<String, Loan> localStorage = new HashMap<>();
 
     @CrossOrigin
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public HttpEntity<Mortgage> register(@RequestBody Mortgage request) {
+    public HttpEntity<Loan> register(@RequestBody Loan request) {
         String id = String.valueOf(localStorage.size() + 1);
         String fullName = request.getFullName();
-        Mortgage mortgage = new Mortgage(id, fullName, false);
+        Loan loan = new Loan(id, fullName, false);
 
         boolean passValidation = Boolean.valueOf(restTemplate.getForObject("http://localhost:8082/credit?name=" + fullName, String.class));
-        mortgage.setPass(passValidation);
-        localStorage.put(id, mortgage);
+        loan.setPass(passValidation);
+        localStorage.put(id, loan);
 
-        ControllerLinkBuilder linkBuilder = ControllerLinkBuilder.linkTo(methodOn(this.getClass()).get(mortgage.getMortgageId()));
+        ControllerLinkBuilder linkBuilder = ControllerLinkBuilder.linkTo(methodOn(this.getClass()).get(loan.getLoadId()));
         URI uri = linkBuilder.toUri();
 
-        if (mortgage.isPass()) {
+        if (loan.isPass()) {
             UriComponents uriComponents = UriComponentsBuilder.newInstance()
                     .scheme(uri.getScheme()).host(uri.getHost()).port(uri.getPort())
                     .path("/ui/certification.html")
-                    .queryParam("id", id).build();
+                    .queryParam("loadId", id).build();
             Link link = new Link(uriComponents.toUriString(), "next");
-            mortgage.add(link);
+            loan.add(link);
         } else {
             UriComponents uriComponents = UriComponentsBuilder.newInstance()
                     .scheme(uri.getScheme()).host(uri.getHost()).port(uri.getPort())
                     .path("/ui/resolution.html")
-                    .queryParam("id", id).build();
+                    .queryParam("loadId", id).build();
             Link link = new Link(uriComponents.toUriString(), "next");
-            mortgage.add(link);
+            loan.add(link);
         }
 
-        return new ResponseEntity<>(mortgage, HttpStatus.OK);
+        return new ResponseEntity<>(loan, HttpStatus.OK);
     }
 
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public HttpEntity<Mortgage> get(@PathVariable(name = "id") String id) {
-        Mortgage mortgage = localStorage.get(id);
-        if (mortgage == null) {
+    public HttpEntity<Loan> get(@PathVariable(name = "id") String id) {
+        Loan loan = localStorage.get(id);
+        if (loan == null) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         } else {
-            return new ResponseEntity<>(mortgage, HttpStatus.OK);
+            return new ResponseEntity<>(loan, HttpStatus.OK);
         }
     }
 
